@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLocalidadDto } from './dto/create-localidad.dto';
-import { UpdateLocalidadDto } from './dto/update-localidad.dto';
-import { LocalidadRepository } from './lib/localidad.repository';
-import { Localidad } from './models/localidad.model';
+import { CreateLocalidadDto } from '../dto/create-localidad.dto';
+import { UpdateLocalidadDto } from '../dto/update-localidad.dto';
+import { LocalidadRepository } from '../daos/localidad.repository';
+import { Localidad } from '../models/localidad.model';
 
 @Injectable()
 export class UserServiceService {

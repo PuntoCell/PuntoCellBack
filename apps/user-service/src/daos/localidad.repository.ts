@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateLocalidadDto } from '../dto/create-localidad.dto';
 import { UpdateLocalidadDto } from '../dto/update-localidad.dto';
 import { Localidad } from '../models/localidad.model';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../lib/prisma.service';
 
 @Injectable()
 export class LocalidadRepository {

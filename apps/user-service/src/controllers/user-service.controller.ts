@@ -17,10 +17,10 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateLocalidadDto } from './dto/create-localidad.dto';
-import { UpdateLocalidadDto } from './dto/update-localidad.dto';
-import { Localidad } from './models/localidad.model';
-import { UserServiceService } from './user-service.service';
+import { CreateLocalidadDto } from '../dto/create-localidad.dto';
+import { UpdateLocalidadDto } from '../dto/update-localidad.dto';
+import { Localidad } from '../models/localidad.model';
+import { UserServiceService } from '../services/user-service.service';
 
 @ApiTags('localidades')
 @Controller('localidades')

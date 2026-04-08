@@ -8,17 +8,22 @@
     "prisma:dbpull": "prisma db pull",
     "start:nest:user-service": "npx nest start user-service --watch",
     "start:user-service": "ts-node-dev --respawn --transpile-only apps/user-service/src/main.ts",
-    "test:user-service": "jest apps/user-service --runInBand"
+    "test:user-service": "jest apps/user-service --runInBand",
+    "test:user-service:node": "node --test -r ts-node/register apps/user-service/src/node-tests/localidad.test.ts",
+    "start:personal-express": "ts-node-dev --respawn --transpile-only apps/personal-service/src/main.express.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-serve-static-core": "^5.1.1",
     "@types/mssql": "^9.1.11",
     "@types/node": "^25.5.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^6.19.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^6.0.2"
@@ -37,6 +42,7 @@
     "axios": "^1.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "express.js": "^1.0.0",
@@ -46,6 +52,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "supertest": "^7.2.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "ts-jest": "^29.4.9"
   }
 }

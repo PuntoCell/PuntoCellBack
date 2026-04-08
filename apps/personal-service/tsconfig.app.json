@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
+    "declarationMap": false,
+    "rootDir": "./src",
     "outDir": "../../dist/apps/personal-service"
   },
   "include": ["src/**/*"],
