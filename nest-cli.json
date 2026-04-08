@@ -1,0 +1,47 @@
+{
+  "monorepo": true,
+  "root": "apps/user-service",
+  "sourceRoot": "apps/user-service/src",
+  "compilerOptions": {
+    "webpack": false,
+    "tsConfigPath": "apps/user-service/tsconfig.app.json"
+  },
+  "projects": {
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
+    },
+    "cervantespuntocell-new": {
+      "type": "application",
+      "root": "apps/cervantespuntocell-new",
+      "entryFile": "main",
+      "sourceRoot": "apps/cervantespuntocell-new/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cervantespuntocell-new/tsconfig.app.json"
+      }
+    },
+    "client-service": {
+      "type": "application",
+      "root": "apps/client-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/client-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/client-service/tsconfig.app.json"
+      }
+    },
+    "user-service": {
+      "type": "application",
+      "root": "apps/user-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/user-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/user-service/tsconfig.app.json"
+      }
+    }
+  }
+}

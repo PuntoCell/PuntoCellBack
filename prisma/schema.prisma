@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+model Localidad {
+  id     Int    @id @default(autoincrement()) @map("Id")
+  nombre String @db.NVarChar(100) @map("Nombre")
+
+  @@map("Localidad")
+}

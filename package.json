@@ -1,0 +1,46 @@
+{
+  "name": "cervantespuntocell-new",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:dbpull": "prisma db pull",
+    "start:nest:user-service": "npx nest start user-service --watch",
+    "start:user-service": "ts-node-dev --respawn --transpile-only apps/user-service/src/main.ts",
+    "test:user-service": "jest apps/user-service --runInBand"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/mssql": "^9.1.11",
+    "@types/node": "^25.5.2",
+    "prisma": "^6.19.3",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/config": "^4.0.3",
+    "@nestjs/core": "^11.1.18",
+    "@nestjs/mongoose": "^11.0.4",
+    "@nestjs/platform-express": "^11.1.18",
+    "@nestjs/swagger": "^11.2.6",
+    "@nestjs/testing": "^11.1.18",
+    "@prisma/client": "^6.19.3",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^7.2.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.4",
+    "dotenv": "^17.4.1",
+    "jest": "^30.3.0",
+    "mongoose": "^9.4.1",
+    "mssql": "^12.2.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.9"
+  }
+}
