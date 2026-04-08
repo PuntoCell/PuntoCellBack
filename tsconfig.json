@@ -9,7 +9,10 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "es2019",
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -45,6 +48,8 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {}
   }
 }

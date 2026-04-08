@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "declarationMap": false,
-    "rootDir": "./src",
-    "outDir": "../../dist/apps/cervantespuntocell-new"
+    "outDir": "../../dist/apps/sucursales-service"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]

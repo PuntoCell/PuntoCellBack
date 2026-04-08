@@ -16,6 +16,15 @@
         "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
       }
     },
+    "catalogo-service": {
+      "type": "application",
+      "root": "apps/catalogo-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/catalogo-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/catalogo-service/tsconfig.app.json"
+      }
+    },
     "cervantespuntocell-new": {
       "type": "application",
       "root": "apps/cervantespuntocell-new",
@@ -34,6 +43,69 @@
         "tsConfigPath": "apps/client-service/tsconfig.app.json"
       }
     },
+    "dispositivos-service": {
+      "type": "application",
+      "root": "apps/dispositivos-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/dispositivos-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/dispositivos-service/tsconfig.app.json"
+      }
+    },
+    "inventario-service": {
+      "type": "application",
+      "root": "apps/inventario-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/inventario-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/inventario-service/tsconfig.app.json"
+      }
+    },
+    "notificaciones-service": {
+      "type": "application",
+      "root": "apps/notificaciones-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notificaciones-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notificaciones-service/tsconfig.app.json"
+      }
+    },
+    "personal-service": {
+      "type": "application",
+      "root": "apps/personal-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/personal-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/personal-service/tsconfig.app.json"
+      }
+    },
+    "reparaciones-service": {
+      "type": "application",
+      "root": "apps/reparaciones-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/reparaciones-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reparaciones-service/tsconfig.app.json"
+      }
+    },
+    "reportes-service": {
+      "type": "application",
+      "root": "apps/reportes-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/reportes-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reportes-service/tsconfig.app.json"
+      }
+    },
+    "sucursales-service": {
+      "type": "application",
+      "root": "apps/sucursales-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/sucursales-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/sucursales-service/tsconfig.app.json"
+      }
+    },
     "user-service": {
       "type": "application",
       "root": "apps/user-service",
@@ -41,6 +113,15 @@
       "sourceRoot": "apps/user-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
+      }
+    },
+    "ventas-service": {
+      "type": "application",
+      "root": "apps/ventas-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/ventas-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ventas-service/tsconfig.app.json"
       }
     }
   }
