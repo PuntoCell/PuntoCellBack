@@ -74,5 +74,26 @@ export function personalRouter(service: PersonalServiceService) {
     res.json(removed);
   });
 
+  // Rol <-> Permiso assignments
+  router.post('/roles/:idRol/permisos', async (req: Request, res: Response) => {
+    const idRol = Number(req.params.idRol);
+    const idPermiso = Number(req.body.idPermiso);
+    const created = await service.assignPermisoToRol({ idRol, idPermiso });
+    res.status(201).json(created);
+  });
+
+  router.get('/roles/:idRol/permisos', async (req: Request, res: Response) => {
+    const idRol = Number(req.params.idRol);
+    const list = await service.listPermisosDeRol(idRol);
+    res.json(list);
+  });
+
+  router.delete('/roles/:idRol/permisos/:idPermiso', async (req: Request, res: Response) => {
+    const idRol = Number(req.params.idRol);
+    const idPermiso = Number(req.params.idPermiso);
+    const removed = await service.removePermisoFromRol(idRol, idPermiso);
+    res.json(removed);
+  });
+
   return router;
 }

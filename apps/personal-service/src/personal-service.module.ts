@@ -3,6 +3,7 @@ import { PersonalServiceController } from './controllers/personal-service.contro
 import { PersonalServiceService } from './services/personal-service.service';
 import { RolRepository } from './daos/rol.repository';
 import { PermisoRepository } from './daos/permiso.repository';
+import { RolPermisoRepository } from './daos/rol-permiso.repository';
 import { PrismaService } from './lib/prisma.service';
 
 @Module({
@@ -12,6 +13,7 @@ import { PrismaService } from './lib/prisma.service';
     PersonalServiceService,
     RolRepository,
     PermisoRepository,
+    RolPermisoRepository,
     PrismaService,
   ],
 })

@@ -2,49 +2,38 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreatePermisoDto } from '../dto/create-permiso.dto';
 import { UpdatePermisoDto } from '../dto/update-permiso.dto';
 import { Permiso } from '../models/permiso.model';
+import { PrismaService } from '../lib/prisma.service';
 
 @Injectable()
 export class PermisoRepository {
-  private items: Permiso[] = [];
-  private nextId = 1;
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Permiso[]> {
-    return this.items.slice();
+    return this.prisma.permiso.findMany();
   }
 
   async findOne(id: number): Promise<Permiso> {
-    const p = this.items.find((r) => r.id === id);
+    const p = await this.prisma.permiso.findUnique({ where: { id } });
     if (!p) throw new NotFoundException(`No existe permiso con id ${id}`);
-    return p;
+    return p as Permiso;
   }
 
   async create(dto: CreatePermisoDto): Promise<Permiso> {
-    if (this.items.some((r) => r.recurso === dto.recurso && r.accion === dto.accion)) {
-      throw new ConflictException('El permiso ya existe');
-    }
-
-    const permiso = {
-      id: this.nextId++,
-      recurso: dto.recurso,
-      accion: dto.accion,
-      nombre: dto.nombre,
-    } as Permiso;
-
-    this.items.push(permiso);
-    return permiso;
+    const exists = await this.prisma.permiso.findFirst({ where: { recurso: dto.recurso, accion: dto.accion } });
+    if (exists) throw new ConflictException('El permiso ya existe');
+    const permiso = await this.prisma.permiso.create({ data: { recurso: dto.recurso, accion: dto.accion, nombre: dto.nombre } });
+    return permiso as Permiso;
   }
 
   async update(id: number, dto: UpdatePermisoDto): Promise<Permiso> {
-    const permiso = await this.findOne(id);
-    if (dto.recurso !== undefined) permiso.recurso = dto.recurso;
-    if (dto.accion !== undefined) permiso.accion = dto.accion;
-    if (dto.nombre !== undefined) permiso.nombre = dto.nombre;
-    return permiso;
+    await this.findOne(id);
+    const permiso = await this.prisma.permiso.update({ where: { id }, data: { recurso: dto.recurso, accion: dto.accion, nombre: dto.nombre } });
+    return permiso as Permiso;
   }
 
   async remove(id: number): Promise<Permiso> {
     const permiso = await this.findOne(id);
-    this.items = this.items.filter((r) => r.id !== id);
-    return permiso;
+    await this.prisma.permiso.delete({ where: { id } });
+    return permiso as Permiso;
   }
 }

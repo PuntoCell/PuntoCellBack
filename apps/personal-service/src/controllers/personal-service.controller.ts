@@ -24,6 +24,8 @@ import { Rol } from '../models/rol.model';
 import { CreatePermisoDto } from '../dto/create-permiso.dto';
 import { UpdatePermisoDto } from '../dto/update-permiso.dto';
 import { Permiso } from '../models/permiso.model';
+import { CreateRolPermisoDto } from '../dto/create-rol-permiso.dto';
+import { RolPermiso } from '../models/rol-permiso.model';
 
 @ApiTags('personal')
 @Controller()
@@ -140,5 +142,39 @@ export class PersonalServiceController {
   @ApiOkResponse({ type: Permiso })
   removePermiso(@Param('id', ParseIntPipe) id: number): Promise<Permiso> {
     return this.personalServiceService.removePermiso(id);
+  }
+
+  // Rol <-> Permiso assignments
+  @Post('roles/:idRol/permisos')
+  @ApiOperation({ summary: 'Asignar permiso a rol' })
+  @ApiParam({ name: 'idRol', type: Number })
+  @ApiBody({ type: CreateRolPermisoDto })
+  @ApiCreatedResponse({ type: RolPermiso })
+  async assignPermisoToRol(
+    @Param('idRol', ParseIntPipe) idRol: number,
+    @Body() dto: CreateRolPermisoDto,
+  ): Promise<RolPermiso> {
+    const assignDto = { idRol, idPermiso: dto.idPermiso };
+    return this.personalServiceService.assignPermisoToRol(assignDto as any);
+  }
+
+  @Get('roles/:idRol/permisos')
+  @ApiOperation({ summary: 'Listar permisos asignados a un rol' })
+  @ApiParam({ name: 'idRol', type: Number })
+  @ApiOkResponse({ type: Permiso, isArray: true })
+  listPermisosDeRol(@Param('idRol', ParseIntPipe) idRol: number): Promise<Permiso[]> {
+    return this.personalServiceService.listPermisosDeRol(idRol);
+  }
+
+  @Delete('roles/:idRol/permisos/:idPermiso')
+  @ApiOperation({ summary: 'Remover permiso de un rol' })
+  @ApiParam({ name: 'idRol', type: Number })
+  @ApiParam({ name: 'idPermiso', type: Number })
+  @ApiOkResponse({ type: RolPermiso })
+  removePermisoFromRol(
+    @Param('idRol', ParseIntPipe) idRol: number,
+    @Param('idPermiso', ParseIntPipe) idPermiso: number,
+  ) {
+    return this.personalServiceService.removePermisoFromRol(idRol, idPermiso);
   }
 }

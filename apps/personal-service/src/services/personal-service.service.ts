@@ -7,12 +7,14 @@ import { Rol } from '../models/rol.model';
 import { Permiso } from '../models/permiso.model';
 import { RolRepository } from '../daos/rol.repository';
 import { PermisoRepository } from '../daos/permiso.repository';
+import { RolPermisoRepository } from '../daos/rol-permiso.repository';
 
 @Injectable()
 export class PersonalServiceService {
   constructor(
     private readonly rolRepository: RolRepository,
     private readonly permisoRepository: PermisoRepository,
+    private readonly rolPermisoRepository?: RolPermisoRepository,
   ) {}
 
   // Roles
@@ -55,5 +57,29 @@ export class PersonalServiceService {
 
   removePermiso(id: number): Promise<Permiso> {
     return this.permisoRepository.remove(id);
+  }
+
+  // Rol-Permiso assignments
+  async assignPermisoToRol(dto: { idRol: number; idPermiso: number }) {
+    if (!this.rolPermisoRepository) throw new Error('RolPermisoRepository not provided');
+    await this.rolRepository.findOne(dto.idRol);
+    await this.permisoRepository.findOne(dto.idPermiso);
+    return this.rolPermisoRepository.create(dto as any);
+  }
+
+  async listPermisosDeRol(idRol: number): Promise<Permiso[]> {
+    if (!this.rolPermisoRepository) throw new Error('RolPermisoRepository not provided');
+    await this.rolRepository.findOne(idRol);
+    const asigns = await this.rolPermisoRepository.findByRole(idRol);
+    const permisos: Permiso[] = [];
+    for (const a of asigns) {
+      permisos.push(await this.permisoRepository.findOne(a.idPermiso));
+    }
+    return permisos;
+  }
+
+  async removePermisoFromRol(idRol: number, idPermiso: number) {
+    if (!this.rolPermisoRepository) throw new Error('RolPermisoRepository not provided');
+    return this.rolPermisoRepository.removeByRoleAndPermiso(idRol, idPermiso);
   }
 }

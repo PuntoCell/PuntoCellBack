@@ -2,47 +2,38 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateRolDto } from '../dto/create-rol.dto';
 import { UpdateRolDto } from '../dto/update-rol.dto';
 import { Rol } from '../models/rol.model';
+import { PrismaService } from '../lib/prisma.service';
 
 @Injectable()
 export class RolRepository {
-  private items: Rol[] = [];
-  private nextId = 1;
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<Rol[]> {
-    return this.items.slice();
+    return this.prisma.rol.findMany();
   }
 
   async findOne(id: number): Promise<Rol> {
-    const rol = this.items.find((r) => r.id === id);
+    const rol = await this.prisma.rol.findUnique({ where: { id } });
     if (!rol) throw new NotFoundException(`No existe rol con id ${id}`);
-    return rol;
+    return rol as Rol;
   }
 
   async create(dto: CreateRolDto): Promise<Rol> {
-    if (this.items.some((r) => r.nombre === dto.nombre)) {
-      throw new ConflictException('El rol ya existe');
-    }
-
-    const rol: Rol = {
-      id: this.nextId++,
-      nombre: dto.nombre,
-      activo: dto.activo ?? true,
-    };
-
-    this.items.push(rol);
-    return rol;
+    const exists = await this.prisma.rol.findFirst({ where: { nombre: dto.nombre } });
+    if (exists) throw new ConflictException('El rol ya existe');
+    const rol = await this.prisma.rol.create({ data: { nombre: dto.nombre, activo: dto.activo ?? true } });
+    return rol as Rol;
   }
 
   async update(id: number, dto: UpdateRolDto): Promise<Rol> {
-    const rol = await this.findOne(id);
-    if (dto.nombre !== undefined) rol.nombre = dto.nombre;
-    if (dto.activo !== undefined) rol.activo = dto.activo;
-    return rol;
+    await this.findOne(id);
+    const rol = await this.prisma.rol.update({ where: { id }, data: { nombre: dto.nombre, activo: dto.activo } });
+    return rol as Rol;
   }
 
   async remove(id: number): Promise<Rol> {
     const rol = await this.findOne(id);
-    this.items = this.items.filter((r) => r.id !== id);
-    return rol;
+    await this.prisma.rol.delete({ where: { id } });
+    return rol as Rol;
   }
 }

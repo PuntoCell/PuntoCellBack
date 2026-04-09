@@ -8,8 +8,600 @@ datasource db {
 }
 
 model Localidad {
-  id     Int    @id @default(autoincrement()) @map("Id")
-  nombre String @db.NVarChar(100) @map("Nombre")
+  id        Int         @id(map: "PK__Localida__3214EC07194FDF52") @default(autoincrement()) @map("Id")
+  nombre    String      @map("Nombre") @db.NVarChar(100)
+  Cliente   Cliente[]
+  Empleado  Empleado[]
+  Proveedor Proveedor[]
+  Sucursal  Sucursal[]
+  Usuario   Usuario[]
 
   @@map("Localidad")
+}
+
+model Rol {
+  id          Int          @id(map: "PK__Rol__3214EC076A92B61C") @default(autoincrement()) @map("Id")
+  Nombre      String       @db.NVarChar(100)
+  Activo      Boolean
+  Empleado    Empleado[]
+  rolPermisos RolPermiso[]
+  Usuario     Usuario[]
+
+  @@map("Rol")
+}
+
+model Permiso {
+  id          Int          @id(map: "PK__Permiso__3214EC07A6D78F56") @default(autoincrement()) @map("Id")
+  Recurso     String       @db.NVarChar(100)
+  Accion      String       @db.NVarChar(50)
+  Nombre      String       @db.NVarChar(150)
+  rolPermisos RolPermiso[]
+
+  @@unique([Recurso, Accion], map: "UQ_Permiso")
+  @@map("Permiso")
+}
+
+model RolPermiso {
+  rolId     Int     @map("IdRol")
+  permisoId Int     @map("IdPermiso")
+  permiso   Permiso @relation(fields: [permisoId], references: [id], onUpdate: NoAction, map: "FK_RolPermiso_Permiso")
+  rol       Rol     @relation(fields: [rolId], references: [id], onUpdate: NoAction, map: "FK_RolPermiso_Rol")
+
+  @@id([rolId, permisoId], map: "PK__RolPermi__BA9F7EA03122B29F")
+  @@map("RolPermiso")
+}
+
+model Accion {
+  Id       Int        @id(map: "PK__Accion__3214EC07CC08CE08") @default(autoincrement())
+  Nombre   String     @db.NVarChar(100)
+  Bitacora Bitacora[]
+}
+
+model Bateria {
+  Id                  Int                   @id(map: "PK__Bateria__3214EC0778F8477A") @default(autoincrement())
+  Capacidad           String                @db.NVarChar(50)
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+}
+
+model Bitacora {
+  Id         Int       @id(map: "PK__Bitacora__3214EC074BFF746F") @default(autoincrement())
+  Detalle    String?   @db.NVarChar(Max)
+  IpAddress  String?   @db.NVarChar(50)
+  Fecha      DateTime? @db.DateTime
+  IdEmpleado Int?
+  IdSucursal Int?
+  IdAccion   Int?
+  Accion     Accion?   @relation(fields: [IdAccion], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Bitacora_Accion")
+  Empleado   Empleado? @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Bitacora_Empleado")
+  Sucursal   Sucursal? @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Bitacora_Sucursal")
+}
+
+model CatalogoComponente {
+  Id                     Int                      @id(map: "PK__Catalogo__3214EC07C7EB307D") @default(autoincrement())
+  Nombre                 String                   @db.NVarChar(150)
+  EsSerializado          Boolean
+  EsRepuesto             Boolean
+  EsVendible             Boolean
+  PrecioARS              Decimal                  @db.Decimal(18, 2)
+  PrecioUSD              Decimal                  @db.Decimal(18, 2)
+  PrecioCostoARS         Decimal                  @db.Decimal(18, 2)
+  Activo                 Boolean
+  CreatedAt              DateTime                 @db.DateTime
+  IdTipoDispositivo      Int
+  IdMarcaDispositivo     Int
+  IdModeloDispositivo    Int
+  IdColor                Int?
+  IdMemoria              Int?
+  IdBateria              Int?
+  Bateria                Bateria?                 @relation(fields: [IdBateria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatComp_Bateria")
+  Color                  Color?                   @relation(fields: [IdColor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatComp_Color")
+  MarcaDispositivo       MarcaDispositivo         @relation(fields: [IdMarcaDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatComp_Marca")
+  Memoria                Memoria?                 @relation(fields: [IdMemoria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatComp_Memoria")
+  ModeloDispositivo      ModeloDispositivo        @relation(fields: [IdModeloDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatComp_Modelo")
+  TipoDispositivo        TipoDispositivo          @relation(fields: [IdTipoDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatComp_Tipo")
+  TransferenciaStockItem TransferenciaStockItem[]
+}
+
+model CatalogoDispositivo {
+  Id                     Int                      @id(map: "PK__Catalogo__3214EC07FF1F4DDD") @default(autoincrement())
+  Nombre                 String                   @db.NVarChar(150)
+  EsSerializado          Boolean
+  EsVendible             Boolean
+  PrecioARS              Decimal                  @db.Decimal(18, 2)
+  PrecioUSD              Decimal                  @db.Decimal(18, 2)
+  Activo                 Boolean
+  CreatedAt              DateTime                 @db.DateTime
+  IdTipoDispositivo      Int
+  IdMarcaDispositivo     Int
+  IdModeloDispositivo    Int
+  IdColor                Int?
+  IdMemoria              Int?
+  IdBateria              Int?
+  Bateria                Bateria?                 @relation(fields: [IdBateria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatDispo_Bateria")
+  Color                  Color?                   @relation(fields: [IdColor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatDispo_Color")
+  MarcaDispositivo       MarcaDispositivo         @relation(fields: [IdMarcaDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatDispo_Marca")
+  Memoria                Memoria?                 @relation(fields: [IdMemoria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CatDispo_Memoria")
+  ModeloDispositivo      ModeloDispositivo        @relation(fields: [IdModeloDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatDispo_Modelo")
+  TipoDispositivo        TipoDispositivo          @relation(fields: [IdTipoDispositivo], references: [Id], onUpdate: NoAction, map: "FK_CatDispo_Tipo")
+  ItemInventario         ItemInventario[]
+  TransferenciaStockItem TransferenciaStockItem[]
+}
+
+model CierreCaja {
+  Id            Int       @id(map: "PK__CierreCa__3214EC07C4A6FD04") @default(autoincrement())
+  Fecha         DateTime? @db.DateTime
+  TotalIngresos Decimal?  @db.Decimal(18, 2)
+  TotalEgresos  Decimal?  @db.Decimal(18, 2)
+  GananciaNeta  Decimal?  @db.Decimal(18, 2)
+  Observaciones String?   @db.NVarChar(Max)
+  CreatedAt     DateTime? @db.DateTime
+  IdSucursal    Int?
+  IdEmpleado    Int?
+  Empleado      Empleado? @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CierreCaja_Empleado")
+  Sucursal      Sucursal? @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_CierreCaja_Sucursal")
+}
+
+model Cliente {
+  Id              Int               @id(map: "PK__Cliente__3214EC07896E41ED") @default(autoincrement())
+  DNI             String            @unique(map: "UQ__Cliente__C035B8DDC68B8445") @db.NVarChar(8)
+  Apellido        String            @db.NVarChar(100)
+  Nombre          String            @db.NVarChar(100)
+  Email           String            @unique(map: "UQ__Cliente__A9D10534D0E938FE") @db.NVarChar(100)
+  Celular         String            @db.NVarChar(11)
+  Calle           String            @db.NVarChar(100)
+  Numero          String            @db.NVarChar(6)
+  Piso            String?           @db.NVarChar(4)
+  Depto           String?           @db.NVarChar(6)
+  IdLocalidad     Int?
+  CreatedAt       DateTime?         @db.DateTime
+  Localidad       Localidad?        @relation(fields: [IdLocalidad], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Cliente_Localidad")
+  OrdenReparacion OrdenReparacion[]
+  Venta           Venta[]
+}
+
+model Color {
+  Id                  Int                   @id(map: "PK__Color__3214EC07FDB78387") @default(autoincrement())
+  Nombre              String                @db.NVarChar(100)
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+  DispositivoCliente  DispositivoCliente[]
+}
+
+model Configuraciones {
+  Id        Int       @id(map: "PK__Configur__3214EC07A1336BDD") @default(autoincrement())
+  Clave     String    @db.NVarChar(50)
+  Valor     String    @db.NVarChar(50)
+  CreatedAt DateTime? @db.DateTime
+}
+
+model Cotizacion {
+  Id        Int      @id(map: "PK__Cotizaci__3214EC07F6EF0E7D") @default(autoincrement())
+  Clave     String   @db.NVarChar(50)
+  Valor     Decimal  @db.Decimal(18, 2)
+  CreatedAt DateTime @db.DateTime
+}
+
+model Cuota {
+  Id               Int       @id(map: "PK__Cuota__3214EC071C2D45D2") @default(autoincrement())
+  NumeroCuota      Int
+  MontoCuota       Decimal   @db.Decimal(18, 2)
+  FechaVencimiento DateTime  @db.DateTime
+  FechaPago        DateTime? @db.DateTime
+  Recargo          Decimal?  @db.Decimal(18, 2)
+  CreatedAt        DateTime? @db.DateTime
+  IdVenta          Int?
+  IdEstado         Int?
+  Estado           Estado?   @relation(fields: [IdEstado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Cuota_Estado")
+  Venta            Venta?    @relation(fields: [IdVenta], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Cuota_Venta")
+}
+
+model Descuento {
+  Id         Int       @id(map: "PK__Descuent__3214EC07D514A865") @default(autoincrement())
+  Nombre     String    @unique(map: "UQ__Descuent__75E3EFCFAAD6C8DD") @db.NVarChar(100)
+  Porcentaje Decimal   @db.Decimal(5, 2)
+  Activo     Boolean
+  FechaDesde DateTime? @db.DateTime
+  FechaHasta DateTime? @db.DateTime
+}
+
+model DetalleVenta {
+  Id             Int          @id(map: "PK__DetalleV__3214EC070CBA92CB") @default(autoincrement())
+  Cantidad       Int
+  PrecioUnitario Decimal      @db.Decimal(18, 2)
+  IMEI           String?      @db.VarChar(50)
+  CreatedAt      DateTime?    @db.DateTime
+  IdVenta        Int?
+  IdDispositivo  Int?
+  Dispositivo    Dispositivo? @relation(fields: [IdDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_DetalleVenta_Dispositivo")
+  Venta          Venta?       @relation(fields: [IdVenta], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_DetalleVenta_Venta")
+}
+
+model Dispositivo {
+  Id                  Int                @id(map: "PK__Disposit__3214EC07738C6305") @default(autoincrement())
+  Nombre              String             @db.NVarChar(150)
+  EsSerializado       Boolean
+  CreatedAt           DateTime?          @db.DateTime
+  IdTipoDispositivo   Int?
+  IdMarcaDispositivo  Int?
+  IdModeloDispositivo Int?
+  IdColor             Int?
+  IdMemoria           Int?
+  IdBateria           Int?
+  DetalleVenta        DetalleVenta[]
+  Bateria             Bateria?           @relation(fields: [IdBateria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_Bateria")
+  Color               Color?             @relation(fields: [IdColor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_Color")
+  MarcaDispositivo    MarcaDispositivo?  @relation(fields: [IdMarcaDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_MarcaDispositivo")
+  Memoria             Memoria?           @relation(fields: [IdMemoria], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_Memoria")
+  ModeloDispositivo   ModeloDispositivo? @relation(fields: [IdModeloDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_ModeloDispositivo")
+  TipoDispositivo     TipoDispositivo?   @relation(fields: [IdTipoDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Dispositivo_TipoDispositivo")
+  Inventario          Inventario[]
+  MovimientoStock     MovimientoStock[]
+  OrdenReparacion     OrdenReparacion[]
+}
+
+model DispositivoCliente {
+  Id                  Int               @id(map: "PK__Disposit__3214EC07F91786B6") @default(autoincrement())
+  IMEI                String?           @db.NVarChar(50)
+  Desbloqueo          String?           @db.NVarChar(100)
+  Observaciones       String?           @db.NVarChar(500)
+  CreatedAt           DateTime          @db.DateTime
+  IdUsuario           Int
+  IdTipoDispositivo   Int
+  IdMarcaDispositivo  Int
+  IdModeloDispositivo Int
+  IdColor             Int?
+  Color               Color?            @relation(fields: [IdColor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_DispCli_Color")
+  MarcaDispositivo    MarcaDispositivo  @relation(fields: [IdMarcaDispositivo], references: [Id], onUpdate: NoAction, map: "FK_DispCli_Marca")
+  ModeloDispositivo   ModeloDispositivo @relation(fields: [IdModeloDispositivo], references: [Id], onUpdate: NoAction, map: "FK_DispCli_Modelo")
+  TipoDispositivo     TipoDispositivo   @relation(fields: [IdTipoDispositivo], references: [Id], onUpdate: NoAction, map: "FK_DispCli_Tipo")
+  Usuario             Usuario           @relation(fields: [IdUsuario], references: [Id], onUpdate: NoAction, map: "FK_DispCli_Usuario")
+}
+
+model Empleado {
+  Id               Int                @id(map: "PK__Empleado__3214EC07129EEEEE") @default(autoincrement())
+  DNI              String             @unique(map: "UQ__Empleado__C035B8DD5D827436") @db.NVarChar(8)
+  Apellido         String             @db.NVarChar(100)
+  Nombre           String             @db.NVarChar(100)
+  Email            String             @unique(map: "UQ__Empleado__A9D10534DEB3208F") @db.NVarChar(100)
+  Celular          String             @db.NVarChar(11)
+  Calle            String             @db.NVarChar(100)
+  Numero           String             @db.NVarChar(6)
+  Piso             String?            @db.NVarChar(6)
+  Depto            String?            @db.NVarChar(6)
+  Pwd              String             @db.NVarChar(255)
+  Activo           Boolean?
+  CreatedAt        DateTime?          @db.DateTime
+  Usuario          String?            @db.NVarChar(50)
+  IdLocalidad      Int?
+  IdRol            Int?
+  IdSucursal       Int?
+  Bitacora         Bitacora[]
+  CierreCaja       CierreCaja[]
+  Localidad        Localidad?         @relation(fields: [IdLocalidad], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Empleado_Localidad")
+  Rol              Rol?               @relation(fields: [IdRol], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Empleado_Rol")
+  Sucursal         Sucursal?          @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Empleado_Sucursal")
+  MovimientoCaja   MovimientoCaja[]
+  MovimientoStock  MovimientoStock[]
+  OrdenReparacion  OrdenReparacion[]
+  SeguimientoOrden SeguimientoOrden[]
+  Venta            Venta[]
+}
+
+model Empresa {
+  Id             Int      @id(map: "PK__Empresa__3214EC07897238B6") @default(autoincrement())
+  RazonSocial    String   @db.NVarChar(200)
+  NombreFantasia String?  @db.NVarChar(200)
+  CUIT           String?  @unique(map: "UQ__Empresa__F46C1598AD01BB97") @db.NVarChar(13)
+  Condicion      String?  @db.NVarChar(50)
+  PuntoVenta     Int?
+  CertAfip       String?  @db.NVarChar(Max)
+  KeyAfip        String?  @db.NVarChar(Max)
+  Activa         Boolean
+  CreatedAt      DateTime @db.DateTime
+}
+
+model Estado {
+  Id     Int     @id(map: "PK__Estado__3214EC0784A6DF9A") @default(autoincrement())
+  Nombre String  @db.NVarChar(100)
+  Cuota  Cuota[]
+  Venta  Venta[]
+}
+
+model EstadoOrden {
+  Id               Int                @id(map: "PK__EstadoOr__3214EC0712A6B804") @default(autoincrement())
+  Nombre           String             @db.NVarChar(100)
+  OrdenReparacion  OrdenReparacion[]
+  SeguimientoOrden SeguimientoOrden[]
+}
+
+model Falla {
+  Id                Int              @id(map: "PK__Falla__3214EC07F85F4C13") @default(autoincrement())
+  Nombre            String           @db.NVarChar(100)
+  IdTipoDispositivo Int?
+  TipoDispositivo   TipoDispositivo? @relation(fields: [IdTipoDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Falla_TipoDispositivo")
+  OrdenFalla        OrdenFalla[]
+}
+
+model Inventario {
+  Id            Int          @id(map: "PK__Inventar__3214EC075E85B333") @default(autoincrement())
+  IMEI          String?      @db.NVarChar(50)
+  PrecioCosto   Decimal      @db.Decimal(18, 2)
+  PrecioMayor   Decimal?     @db.Decimal(18, 2)
+  PrecioMenor   Decimal      @db.Decimal(18, 2)
+  Stock         Int
+  CreatedAt     DateTime?    @db.DateTime
+  Observaciones String?      @db.NVarChar(500)
+  IdSucursal    Int?
+  IdDispositivo Int?
+  IdProveedor   Int?
+  Dispositivo   Dispositivo? @relation(fields: [IdDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Inventario_Dispositivo")
+  Proveedor     Proveedor?   @relation(fields: [IdProveedor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Inventario_Proveedor")
+  Sucursal      Sucursal?    @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Inventario_Sucursal")
+}
+
+model ItemInventario {
+  Id                     Int                      @id(map: "PK__ItemInve__3214EC07FE8CEDCD") @default(autoincrement())
+  IMEI                   String?                  @db.NVarChar(50)
+  PrecioCosto            Decimal                  @db.Decimal(18, 2)
+  Estado                 String                   @db.NVarChar(20)
+  CreatedAt              DateTime                 @db.DateTime
+  IdDispositivo          Int
+  IdSucursal             Int
+  IdProveedor            Int?
+  CatalogoDispositivo    CatalogoDispositivo      @relation(fields: [IdDispositivo], references: [Id], onUpdate: NoAction, map: "FK_Item_Dispositivo")
+  Proveedor              Proveedor?               @relation(fields: [IdProveedor], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Item_Proveedor")
+  Sucursal               Sucursal                 @relation(fields: [IdSucursal], references: [Id], onUpdate: NoAction, map: "FK_Item_Sucursal")
+  TransferenciaStockItem TransferenciaStockItem[]
+}
+
+model MarcaDispositivo {
+  Id                  Int                   @id(map: "PK__MarcaDis__3214EC0720B69F48") @default(autoincrement())
+  Nombre              String                @unique(map: "UQ__MarcaDis__75E3EFCF6D468742") @db.NVarChar(100)
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+  DispositivoCliente  DispositivoCliente[]
+}
+
+model Memoria {
+  Id                  Int                   @id(map: "PK__Memoria__3214EC07430C301E") @default(autoincrement())
+  Capacidad           String                @db.NVarChar(50)
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+}
+
+model MetodoPago {
+  Id     Int    @id(map: "PK__MetodoPa__3214EC0737A22DBD") @default(autoincrement())
+  Nombre String @db.NVarChar(100)
+  Pago   Pago[]
+}
+
+model ModeloDispositivo {
+  Id                  Int                   @id(map: "PK__ModeloDi__3214EC076D95DAF6") @default(autoincrement())
+  Nombre              String                @db.NVarChar(100)
+  EsApple             Boolean?
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+  DispositivoCliente  DispositivoCliente[]
+}
+
+model MovimientoCaja {
+  Id               Int             @id(map: "PK__Movimien__3214EC07D8A298E0") @default(autoincrement())
+  Fecha            DateTime?       @db.DateTime
+  Monto            Decimal         @db.Decimal(18, 2)
+  Descripcion      String          @db.NVarChar(200)
+  IdSucursal       Int?
+  IdEmpleado       Int?
+  IdTipoMovimiento Int?
+  Empleado         Empleado?       @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_MovimientoCaja_Empleado")
+  Sucursal         Sucursal?       @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_MovimientoCaja_Sucursal")
+  TipoMovimiento   TipoMovimiento? @relation(fields: [IdTipoMovimiento], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_MovimientoCaja_TipoMovimiento")
+}
+
+model MovimientoStock {
+  Id                                                   Int          @id(map: "PK__Movimien__3214EC070B78BF06") @default(autoincrement())
+  Fecha                                                DateTime?    @db.DateTime
+  TipoMovimiento                                       String?      @db.NVarChar(50)
+  Cantidad                                             Int
+  Observaciones                                        String?      @db.NVarChar(Max)
+  IdDispositivo                                        Int?
+  IdSucursalOrigen                                     Int?
+  IdSucursalDestino                                    Int?
+  IdEmpleado                                           Int?
+  Dispositivo                                          Dispositivo? @relation(fields: [IdDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Movimiento_Dispositivo")
+  Empleado                                             Empleado?    @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Movimiento_Empleado")
+  Sucursal_MovimientoStock_IdSucursalDestinoToSucursal Sucursal?    @relation("MovimientoStock_IdSucursalDestinoToSucursal", fields: [IdSucursalDestino], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Movimiento_SucursalDestino")
+  Sucursal_MovimientoStock_IdSucursalOrigenToSucursal  Sucursal?    @relation("MovimientoStock_IdSucursalOrigenToSucursal", fields: [IdSucursalOrigen], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Movimiento_SucursalOrigen")
+}
+
+model OrdenFalla {
+  Id                Int              @id(map: "PK__OrdenFal__3214EC07B4594AD3") @default(autoincrement())
+  IdOrdenReparacion Int?
+  IdFalla           Int?
+  Falla             Falla?           @relation(fields: [IdFalla], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenFalla_Falla")
+  OrdenReparacion   OrdenReparacion? @relation(fields: [IdOrdenReparacion], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenFalla_OrdenReparacion")
+}
+
+model OrdenReparacion {
+  Id               Int                @id(map: "PK__OrdenRep__3214EC075D59AB79") @default(autoincrement())
+  FechaEmision     DateTime           @db.DateTime
+  FechaEntrega     DateTime?          @db.DateTime
+  Desbloqueo       String?            @db.NVarChar(100)
+  IdEstadoOrden    Int?
+  IdCliente        Int?
+  IdEmpleado       Int?
+  IdDispositivo    Int?
+  OrdenFalla       OrdenFalla[]
+  Cliente          Cliente?           @relation(fields: [IdCliente], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenReparacion_Cliente")
+  Dispositivo      Dispositivo?       @relation(fields: [IdDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenReparacion_Dispositivo")
+  Empleado         Empleado?          @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenReparacion_Empleado")
+  EstadoOrden      EstadoOrden?       @relation(fields: [IdEstadoOrden], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_OrdenReparacion_EstadoOrden")
+  SeguimientoOrden SeguimientoOrden[]
+}
+
+model Pago {
+  Id                 Int         @id(map: "PK__Pago__3214EC07D12EC34E") @default(autoincrement())
+  Monto              Decimal     @db.Decimal(18, 2)
+  CotizacionDolar    Decimal?    @db.Decimal(18, 2)
+  Fecha              DateTime?   @db.DateTime
+  Observacion        String?     @db.NVarChar(200)
+  EsDispositivoApple Boolean?
+  ImeiDispositivo    String?     @db.NVarChar(50)
+  FechaVencimiento   DateTime?   @db.DateTime
+  Pagado             Boolean?
+  IdVenta            Int?
+  IdMetodoPago       Int?
+  MetodoPago         MetodoPago? @relation(fields: [IdMetodoPago], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Pago_MetodPago")
+}
+
+model Proveedor {
+  Id             Int              @id(map: "PK__Proveedo__3214EC0778511E70") @default(autoincrement())
+  Nombre         String           @db.NVarChar(100)
+  Email          String           @unique(map: "UQ__Proveedo__A9D1053497E978FD") @db.NVarChar(100)
+  Celular        String           @db.NVarChar(11)
+  Calle          String           @db.NVarChar(100)
+  Numero         String           @db.NVarChar(6)
+  Piso           String?          @db.NVarChar(4)
+  Depto          String?          @db.NVarChar(6)
+  IdLocalidad    Int?
+  CreatedAt      DateTime?        @db.DateTime
+  Inventario     Inventario[]
+  ItemInventario ItemInventario[]
+  Localidad      Localidad?       @relation(fields: [IdLocalidad], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Proveedor_Localidad")
+}
+
+model SeguimientoOrden {
+  Id                 Int              @id(map: "PK__Seguimie__3214EC0783F6845E") @default(autoincrement())
+  FechaModificacion  DateTime         @db.DateTime
+  ObservacionTecnico String?          @db.NVarChar(400)
+  IdOrdenReparacion  Int?
+  IdEstadoOrden      Int?
+  IdEmpleado         Int?
+  Empleado           Empleado?        @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Seguimiento_Empleado")
+  EstadoOrden        EstadoOrden?     @relation(fields: [IdEstadoOrden], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Seguimiento_Estado")
+  OrdenReparacion    OrdenReparacion? @relation(fields: [IdOrdenReparacion], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Seguimiento_Orden")
+}
+
+model Sucursal {
+  Id                                                                Int                  @id(map: "PK__Sucursal__3214EC075164F9D2") @default(autoincrement())
+  Nombre                                                            String               @db.NVarChar(100)
+  Calle                                                             String               @db.NVarChar(100)
+  Numero                                                            String               @db.NVarChar(6)
+  Telefono                                                          String?              @db.NVarChar(20)
+  CreatedAt                                                         DateTime?            @db.DateTime
+  IdLocalidad                                                       Int?
+  Bitacora                                                          Bitacora[]
+  CierreCaja                                                        CierreCaja[]
+  Empleado                                                          Empleado[]
+  Inventario                                                        Inventario[]
+  ItemInventario                                                    ItemInventario[]
+  MovimientoCaja                                                    MovimientoCaja[]
+  MovimientoStock_MovimientoStock_IdSucursalDestinoToSucursal       MovimientoStock[]    @relation("MovimientoStock_IdSucursalDestinoToSucursal")
+  MovimientoStock_MovimientoStock_IdSucursalOrigenToSucursal        MovimientoStock[]    @relation("MovimientoStock_IdSucursalOrigenToSucursal")
+  Localidad                                                         Localidad?           @relation(fields: [IdLocalidad], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Sucursal_Localidad")
+  TransferenciaStock_TransferenciaStock_IdSucursalDestinoToSucursal TransferenciaStock[] @relation("TransferenciaStock_IdSucursalDestinoToSucursal")
+  TransferenciaStock_TransferenciaStock_IdSucursalOrigenToSucursal  TransferenciaStock[] @relation("TransferenciaStock_IdSucursalOrigenToSucursal")
+  Usuario                                                           Usuario[]
+  Venta                                                             Venta[]
+}
+
+model TipoDispositivo {
+  Id                  Int                   @id(map: "PK__TipoDisp__3214EC07466B0FC6") @default(autoincrement())
+  Nombre              String                @db.NVarChar(100)
+  CatalogoComponente  CatalogoComponente[]
+  CatalogoDispositivo CatalogoDispositivo[]
+  Dispositivo         Dispositivo[]
+  DispositivoCliente  DispositivoCliente[]
+  Falla               Falla[]
+}
+
+model TipoMovimiento {
+  Id             Int              @id(map: "PK__TipoMovi__3214EC0782E7B79C") @default(autoincrement())
+  Nombre         String           @db.NVarChar(100)
+  EsIngreso      Boolean
+  MovimientoCaja MovimientoCaja[]
+}
+
+model TransferenciaStock {
+  Id                                                      Int                      @id(map: "PK__Transfer__3214EC07392CA85A") @default(autoincrement())
+  Estado                                                  String                   @db.NVarChar(20)
+  FechaCreacion                                           DateTime                 @db.DateTime
+  FechaConfirmacion                                       DateTime?                @db.DateTime
+  Observaciones                                           String?                  @db.NVarChar(500)
+  MotivoRechazo                                           String?                  @db.NVarChar(500)
+  IdSucursalOrigen                                        Int
+  IdSucursalDestino                                       Int
+  IdUsuarioOrigen                                         Int
+  IdUsuarioDestino                                        Int?
+  Sucursal_TransferenciaStock_IdSucursalDestinoToSucursal Sucursal                 @relation("TransferenciaStock_IdSucursalDestinoToSucursal", fields: [IdSucursalDestino], references: [Id], onUpdate: NoAction, map: "FK_Trans_SucDestino")
+  Sucursal_TransferenciaStock_IdSucursalOrigenToSucursal  Sucursal                 @relation("TransferenciaStock_IdSucursalOrigenToSucursal", fields: [IdSucursalOrigen], references: [Id], onUpdate: NoAction, map: "FK_Trans_SucOrigen")
+  Usuario_TransferenciaStock_IdUsuarioDestinoToUsuario    Usuario?                 @relation("TransferenciaStock_IdUsuarioDestinoToUsuario", fields: [IdUsuarioDestino], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Trans_UsrDestino")
+  Usuario_TransferenciaStock_IdUsuarioOrigenToUsuario     Usuario                  @relation("TransferenciaStock_IdUsuarioOrigenToUsuario", fields: [IdUsuarioOrigen], references: [Id], onUpdate: NoAction, map: "FK_Trans_UsrOrigen")
+  TransferenciaStockItem                                  TransferenciaStockItem[]
+}
+
+model TransferenciaStockItem {
+  Id                  Int                  @id(map: "PK__Transfer__3214EC07F93EEEF5") @default(autoincrement())
+  Cantidad            Int
+  IdTransferencia     Int
+  IdDispositivo       Int?
+  IdComponente        Int?
+  IdItemInventario    Int?
+  CatalogoComponente  CatalogoComponente?  @relation(fields: [IdComponente], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransItem_Comp")
+  CatalogoDispositivo CatalogoDispositivo? @relation(fields: [IdDispositivo], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransItem_Dispo")
+  ItemInventario      ItemInventario?      @relation(fields: [IdItemInventario], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_TransItem_Item")
+  TransferenciaStock  TransferenciaStock   @relation(fields: [IdTransferencia], references: [Id], onUpdate: NoAction, map: "FK_TransItem_Trans")
+}
+
+model Usuario {
+  Id                                                              Int                  @id(map: "PK__Usuario__3214EC07A36E25A8") @default(autoincrement())
+  DNI                                                             String               @unique(map: "UQ__Usuario__C035B8DDAFB06568") @db.NVarChar(8)
+  Apellido                                                        String               @db.NVarChar(100)
+  Nombre                                                          String               @db.NVarChar(100)
+  Email                                                           String               @unique(map: "UQ__Usuario__A9D105349B513AFC") @db.NVarChar(100)
+  Celular                                                         String               @db.NVarChar(11)
+  Calle                                                           String?              @db.NVarChar(100)
+  Numero                                                          String?              @db.NVarChar(6)
+  Piso                                                            String?              @db.NVarChar(6)
+  Depto                                                           String?              @db.NVarChar(6)
+  Pwd                                                             String?              @db.NVarChar(255)
+  Activo                                                          Boolean
+  CreatedAt                                                       DateTime             @db.DateTime
+  IdLocalidad                                                     Int?
+  IdRol                                                           Int
+  IdSucursal                                                      Int?
+  DispositivoCliente                                              DispositivoCliente[]
+  TransferenciaStock_TransferenciaStock_IdUsuarioDestinoToUsuario TransferenciaStock[] @relation("TransferenciaStock_IdUsuarioDestinoToUsuario")
+  TransferenciaStock_TransferenciaStock_IdUsuarioOrigenToUsuario  TransferenciaStock[] @relation("TransferenciaStock_IdUsuarioOrigenToUsuario")
+  Localidad                                                       Localidad?           @relation(fields: [IdLocalidad], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Usuario_Localidad")
+  Rol                                                             Rol                  @relation(fields: [IdRol], references: [id], onUpdate: NoAction, map: "FK_Usuario_Rol")
+  Sucursal                                                        Sucursal?            @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Usuario_Sucursal")
+}
+
+model Venta {
+  Id                 Int            @id(map: "PK__Venta__3214EC07E5ED08D8") @default(autoincrement())
+  Fecha              DateTime?      @db.DateTime
+  TotalVenta         Decimal        @db.Decimal(18, 2)
+  TotalVentaARS      Decimal?       @db.Decimal(18, 2)
+  CotizacionDolar    Decimal?       @db.Decimal(18, 2)
+  TotalCosto         Decimal        @db.Decimal(18, 2)
+  Bonificacion       Decimal?       @db.Decimal(18, 2)
+  Observaciones      String?        @db.NVarChar(Max)
+  MotivoBonificacion String?        @db.NVarChar(500)
+  IdSucursal         Int?
+  IdCliente          Int?
+  IdEmpleado         Int?
+  IdEstado           Int?
+  IdEstadoPago       Boolean?
+  Cuota              Cuota[]
+  DetalleVenta       DetalleVenta[]
+  Cliente            Cliente?       @relation(fields: [IdCliente], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Venta_Cliente")
+  Empleado           Empleado?      @relation(fields: [IdEmpleado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Venta_Empleado")
+  Estado             Estado?        @relation(fields: [IdEstado], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Venta_Estado")
+  Sucursal           Sucursal?      @relation(fields: [IdSucursal], references: [Id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Venta_Sucursal")
 }
